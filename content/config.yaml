@@ -1,9 +1,9 @@
 # Rendered as the "config.yaml" card next to the bio, in this order.
 # Delete a key (or leave it empty) and it disappears from the site.
 # `now` is optional: two short lines on what you are doing this month.
-now:
-  - training geospatial foundation models at MindEarth
-  - reading about JEPA and world models
+# now:
+#   - prima riga
+#   - seconda riga
 interests:
   - geospatial foundation models
   - representation learning (MAE, JEPA, world models)
