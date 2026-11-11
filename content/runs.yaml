@@ -1,0 +1,50 @@
+# Career as a table of runs, newest first. status: running | finished
+- status: running
+  org: mindearth
+  name: geospatial-ds
+  desc: "Data Scientist, Milan. Deep learning on large-scale satellite data: object detection, foundation models (DINO, CLIP, GroundingDINO, YOLO, MAE), urban-growth forecasting with PredFormer, land-use classification."
+  period: Oct 2024 → now
+  tags: [foundation-models, forecasting, dask, zarr, airflow, lightning]
+  metrics: { tasks: 4, step: in progress }
+- status: finished
+  org: unibo
+  name: baghdad-ai
+  desc: "Research Fellow, University of Bologna. Adapted attention-based segmentation (MANet, U-Net) to CORONA imagery to detect archaeological sites. Covered by La Repubblica, Mar 2024."
+  period: Nov 2023 → Sep 2024
+  tags: [segmentation, corona, archaeology, manet]
+  metrics: { IoU: 0.85+, detection: "0.90", new_sites: 4 }
+- status: finished
+  org: unibo
+  name: tutor-human-data-science
+  desc: University Tutor for the MSc course “Human Data Science”.
+  period: Mar → Jun 2024
+  tags: [teaching]
+  metrics: { lectures: 3 }
+- status: finished
+  org: unibo
+  name: msc-computer-science
+  desc: MSc Computer Science, University of Bologna.
+  period: 2021 → 2024
+  tags: [education]
+  metrics: { grade: 110/110, cum_laude: "true" }
+- status: finished
+  org: smartmobile
+  name: devops
+  desc: Software Developer – DevOps. Monitoring and alerting on telemetry, CI/CD, .NET.
+  period: Mar → Sep 2021
+  tags: [ci/cd, monitoring, .net]
+  metrics: { months: 7 }
+- status: finished
+  org: tue
+  name: erasmus-plus
+  desc: Erasmus+ semester at TU Eindhoven, mathematics and computer science.
+  period: Aug 2019 → Feb 2020
+  tags: [education, abroad]
+  metrics: { country: NL }
+- status: finished
+  org: uniurb
+  name: bsc-applied-cs
+  desc: BSc Applied Computer Science, University of Urbino. Thesis on anomaly detection in time series.
+  period: 2017 → 2021
+  tags: [education, time-series]
+  metrics: { grade: 110/110, cum_laude: "true" }

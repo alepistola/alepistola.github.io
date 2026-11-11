@@ -1,0 +1,26 @@
+# color = the language dot
+- name: AI_floodplains
+  lang: Jupyter
+  color: "#da5b0b"
+  url: https://github.com/alepistola/AI_floodplains
+  desc: "Code behind the PLOS ONE paper: PyTorch segmentation of CORONA imagery."
+- name: AI-OkComputer
+  lang: Jupyter
+  color: "#da5b0b"
+  url: https://github.com/alepistola/AI-OkComputer
+  desc: Interpretable ML for predicting university dropout. XGBoost with LIME and EBM.
+- name: Piatto
+  lang: C#
+  color: "#2e9e3f"
+  url: https://github.com/alepistola/Piatto
+  desc: A peer-to-peer card game over gRPC.
+- name: TimelapseEditor
+  lang: C#
+  color: "#2e9e3f"
+  url: https://github.com/alepistola/TimelapseEditor
+  desc: Smooths timelapse exposure automatically from RAW metadata.
+- name: LLDP-UDP-net-scan
+  lang: Python
+  color: "#3572a5"
+  url: https://github.com/alepistola/LLDP-UDP-net-scan
+  desc: An LLDP and UDP network scanner.

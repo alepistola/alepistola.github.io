@@ -1,0 +1,14 @@
+# Identity and links. Shown in the header, hero and footer.
+name: Alessandro Pistola
+handle: alepistola
+role: Geospatial Data Scientist
+location: Bologna, Italy
+tagline: computer vision × machine learning × Earth observation
+description: Alessandro Pistola, geospatial data scientist in Bologna. Computer vision, machine learning and Earth observation.
+links:
+  - label: github/alepistola
+    url: https://github.com/alepistola
+  - label: linkedin
+    url: https://www.linkedin.com/in/alessandro-pistola
+  - label: plos one paper
+    url: https://doi.org/10.1371/journal.pone.0330419

@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { isListed, isPublished, readingTime } from '../../lib/data.js';
+
+// Only published posts get a page. Hidden ones are built in `npm run dev` only.
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).filter((p) => isListed(p) && isPublished(p));
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, date, status } = post.data;
+const nav = [{ href: '/#runs', label: 'runs' }, { href: '/#writing', label: 'writing' }];
+---
+<Base title={title} description={description} nav={nav}>
+  <article class="post">
+    <p class="crumb"><span class="g">$</span> cat writing/{post.id}.md</p>
+    <h1>{title}</h1>
+    <p class="meta">
+      {date && <span>{date.toISOString().slice(0, 10)}</span>}
+      <span>{readingTime(post.body)} min read</span>
+      <span><b>{status}</b>{post.data.visible === false && ' · hidden (dev only)'}</span>
+    </p>
+    {description && <p class="dek">{description}</p>}
+    <div class="prose"><Content /></div>
+    <p class="back"><a href="/#writing">← back to the log</a></p>
+  </article>
+</Base>

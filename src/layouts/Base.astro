@@ -1,0 +1,49 @@
+---
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/700.css';
+import '@fontsource/jetbrains-mono/800.css';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource-variable/source-serif-4/opsz.css';
+import '@fontsource-variable/source-serif-4/opsz-italic.css';
+import '../styles/global.css';
+import { data } from '../lib/data.js';
+
+const site = data('site');
+const runs = data('runs') ?? [];
+const { title, description = site.description, nav = [] } = Astro.props;
+const active = runs.filter((r) => r.status === 'running').length;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title ? `${title} · ${site.name}` : site.name}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title ?? site.name} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <a href="/"><span class="g">~</span>/{site.handle} <span class="d">· experiment log</span></a>
+        <nav aria-label="Sections">
+          {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        </nav>
+        {active > 0 && <span class="pill"><span class="dot"></span>{active} run active</span>}
+      </div>
+      <slot />
+      <footer>
+        <nav aria-label="Elsewhere">
+          {site.links.map((l) => <a href={l.url}>{l.label}</a>)}
+        </nav>
+        <span>exit code 0 · {site.location}</span>
+      </footer>
+    </div>
+  </body>
+</html>

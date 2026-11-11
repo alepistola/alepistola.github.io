@@ -1,0 +1,159 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { data, isListed, isPublished } from '../lib/data.js';
+
+const site = data('site');
+const config = data('config') ?? {};
+const runs = data('runs') ?? [];
+const pubs = data('publications') ?? [];
+const projects = data('projects') ?? [];
+
+const about = await getEntry('pages', 'about');
+const { Content: About } = about ? await render(about) : { Content: null };
+
+// Published first (newest on top), then work in progress, then drafts.
+const order = { published: 0, wip: 1, draft: 2 };
+const posts = (await getCollection('posts'))
+  .filter(isListed)
+  .sort((a, b) => order[a.data.status] - order[b.data.status] || (b.data.date ?? 0) - (a.data.date ?? 0));
+
+// config.yaml card: keys in file order, empty ones skipped.
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const lines = Object.entries(config)
+  .filter(([, v]) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0))
+  .map(([k, v]) => {
+    const key = `<span class="k">${esc(k)}</span>:`;
+    if (!Array.isArray(v)) return `${key} ${esc(v)}`;
+    if (v.every((x) => String(x).length <= 18)) {
+      const rows = [];
+      let row = '';
+      for (const x of v) {
+        if (row && (row + x).length > 30) { rows.push(row); row = ''; }
+        row += (row ? ', ' : '') + x;
+      }
+      rows.push(row);
+      const pad = ' '.repeat(k.length + 3);
+      return `${key} [${rows.map(esc).join(',\n' + pad)}]`;
+    }
+    return `${key}\n${v.map((x) => `  - ${esc(x)}`).join('\n')}`;
+  })
+  .join('\n');
+
+const [first, ...rest] = site.name.toLowerCase().split(' ');
+const fmt = (d) => d.toISOString().slice(0, 10);
+const nav = [
+  { href: '#runs', label: 'runs' },
+  pubs.length && { href: '#paper', label: 'paper' },
+  projects.length && { href: '#projects', label: 'projects' },
+  posts.length && { href: '#writing', label: 'writing' },
+].filter(Boolean);
+---
+<Base nav={nav}>
+  <header class="hero">
+    <div>
+      <p class="who"><span class="g">$</span> whoami</p>
+      <h1><span>{first}</span><span>{rest.join(' ')}<i class="cur" aria-hidden="true"></i></span></h1>
+      <p class="role"><b>{site.role}</b> · {site.location}<br />{site.tagline}</p>
+    </div>
+    <figure class="fig">
+      <header><span>career.fit()</span><span><span class="leg"><i></i>confusion</span><span class="leg am"><i></i>val_iou</span></span></header>
+      <svg viewBox="0 0 520 214" role="img" aria-label="Decorative chart: a falling loss curve and a rising IoU curve across career milestones from 2017 to today">
+        <g class="grid"><path d="M40 30H500M40 66H500M40 102H500M40 138H500M40 174H500" /></g>
+        <g class="ev"><path d="M40 22V180M142 34V180M244 22V180M393 34V180M439 22V180" /></g>
+        <text x="40" y="17">bsc</text><text x="142" y="29">erasmus</text><text x="244" y="17">msc</text>
+        <text x="389" y="29" text-anchor="end">baghdad-ai</text><text x="439" y="17">mindearth</text>
+        <path d="M40 62H500" stroke="var(--amber)" stroke-width="1" stroke-dasharray="1 5" opacity=".7" fill="none" />
+        <text x="500" y="56" text-anchor="end" style="fill:var(--amber)">0.85</text>
+        <polyline fill="none" stroke="var(--amber)" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 3"
+          points="40,178 70,173 100,162 130,151 160,134 190,121 220,105 250,97 280,85 310,79 340,71 370,67 393,61 430,59 460,58 500,57" />
+        <polyline fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linejoin="round"
+          points="40,38 55,52 70,49 85,70 100,66 115,88 130,95 145,90 160,112 175,108 190,121 205,131 220,126 235,140 250,137 265,149 280,146 295,155 310,151 325,160 340,163 355,158 370,166 385,164 400,170 415,167 430,172 445,170 460,174 475,172 490,175 500,174" />
+        <circle cx="500" cy="174" r="3.5" fill="var(--green)" />
+        <circle cx="500" cy="174" r="7" fill="none" stroke="var(--green)" opacity=".35" />
+        <text x="40" y="200">2017</text><text x="142" y="200" text-anchor="middle">2019</text><text x="244" y="200" text-anchor="middle">2021</text>
+        <text x="346" y="200" text-anchor="middle">2023</text><text x="500" y="200" text-anchor="end">now</text>
+      </svg>
+      <figcaption>fig. 1 — illustrative, not a real training run. The 0.85 line is real though.</figcaption>
+    </figure>
+  </header>
+
+  <section id="about" style="padding-top:8px">
+    <div class="about">
+      <div class="bio">{About && <About />}</div>
+      {lines && (
+        <div class="card">
+          <header><span>config.yaml</span><span>{site.handle}</span></header>
+          <pre set:html={lines} />
+        </div>
+      )}
+    </div>
+  </section>
+
+  {runs.length > 0 && (
+    <section id="runs">
+      <h2>Runs <small>experiment: career · sorted by start, desc</small></h2>
+      <div class="tblwrap">
+        <table class="runs">
+          <thead><tr><th>Status</th><th>Run</th><th>Period</th><th>Tags</th><th>Key metrics</th></tr></thead>
+          <tbody>
+            {runs.map((r) => (
+              <tr class={r.status === 'running' ? 'live' : undefined}>
+                {r.status === 'running'
+                  ? <td class="st run"><span class="dot"></span>running</td>
+                  : <td class="st">✓ finished</td>}
+                <td class="c-run"><span class="rn"><i>{r.org}/</i>{r.name}</span><span class="ds">{r.desc}</span></td>
+                <td class="pd">{r.period}</td>
+                <td><div class="tags">{(r.tags ?? []).map((t) => <span class="tag">{t}</span>)}</div></td>
+                <td class="mt">{Object.entries(r.metrics ?? {}).map(([k, v]) => <span>{k} <b>{v}</b></span>)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+
+  {pubs.length > 0 && (
+    <section id="paper">
+      <h2>Artifacts <small>{pubs.length} logged</small></h2>
+      {pubs.map((p) => (
+        <div class="pub">
+          <span class="badge">{p.badge}</span>
+          <div>
+            <p><Fragment set:html={esc(p.authors).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')} /> “{p.title}”</p>
+            <p>{p.venue} · <a href={p.url}>{p.url_label ?? p.url}</a></p>
+          </div>
+        </div>
+      ))}
+    </section>
+  )}
+
+  {projects.length > 0 && (
+    <section id="projects">
+      <h2>Projects <small>side quests</small></h2>
+      <p class="prompt"><b>$</b> ls -l ~/github/{site.handle}</p>
+      <ul class="ls">
+        {projects.map((p) => (
+          <li><span class="lang" style={`--c:${p.color}`}><i></i>{p.lang}</span><a href={p.url}>{p.name}</a><span class="t">{p.desc}</span></li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {posts.length > 0 && (
+    <section id="writing">
+      <h2>Writing <small>git log --all</small></h2>
+      <ul class="log">
+        {posts.map((p) => (
+          <li class={isPublished(p) ? 'pubd' : undefined}>
+            <span class="h"><b>{p.data.status}</b>{isPublished(p) && p.data.date ? fmt(p.data.date) : 'unpublished'}{p.data.visible === false && ' · hidden (dev only)'}</span>
+            {isPublished(p)
+              ? <a class="ttl" href={`/posts/${p.id}/`}>{p.data.title}</a>
+              : <span class="ttl">{p.data.title}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</Base>
